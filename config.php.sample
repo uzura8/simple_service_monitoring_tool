@@ -28,3 +28,6 @@ $GLOBALS['_DB_DSN'] = array(
 	//),
 );
 
+//// db replication monitor (optional)
+//define('SECONDS_BEHIND_MASTER_LIMIT', 10);
+

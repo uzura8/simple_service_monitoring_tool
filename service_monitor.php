@@ -86,7 +86,16 @@ class Service_Monitor
     }
     foreach($result->fetchAll() as $row)
     {
-      var_dump($row);
+      //var_dump($row);
+      if (!isset($row['Seconds_Behind_Master'])) throw new Exception(sprintf('DB replication error(db:%s)', $db_key));
+
+      if (!defined('SECONDS_BEHIND_MASTER_LIMIT')) continue;
+      if (SECONDS_BEHIND_MASTER_LIMIT === false) continue;
+      $seconds_behind_master = (int)$row['Seconds_Behind_Master'];
+      if ($seconds_behind_master > SECONDS_BEHIND_MASTER_LIMIT)
+      {
+        throw new Exception(sprintf('DB replication delay error(db:%s): %s seconds behind', $db_key, $row['Seconds_Behind_Master']));
+      }
     }
   }
 
