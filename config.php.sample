@@ -8,9 +8,23 @@
 //define('MEMCACHE_PORT', '11211');
 
 // DB setting
-define('DB_HOST','localhost');
-define('DB_USERNAME','username');
-define('DB_PASSWORD','password');
-define('DB_DATABASE','dbname');
-define('DB_PDO_DSN',sprintf('mysql:host=%s;dbname=%s', DB_HOST, DB_DATABASE));
+$GLOBALS['_DB_DSN'] = array(
+	// MasterDB 設定
+	'default' => array(
+		'connection'  => array(
+			'dsn'        => 'mysql:host=localhost;dbname=dbname',
+			'username'   => 'root',
+			'password'   => '',
+		),
+		//'readonly' => array('slave1'),
+	),
+	// SlaveDB 設定
+	//'slave1' => array(
+	//	'connection'  => array(
+	//		'dsn'        => 'mysql:host=localhost;port=3307;unix_socket=/tmp/mysql.sock2;dbname=dbname',
+	//		'username'   => 'root',
+	//		'password'   => '',
+	//	),
+	//),
+);
 
