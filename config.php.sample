@@ -1,0 +1,15 @@
+<?php
+
+// if limit access, set accepted ip here
+//define('ACCESSIBLE_IP', '');
+
+// DB setting
+define('DB_HOST','localhost');
+define('DB_USERNAME','username');
+define('DB_PASSWORD','password');
+define('DB_DATABASE','dbname');
+define('DB_PDO_DSN',sprintf('mysql:host=%s;dbname=%s', DB_HOST, DB_DATABASE));
+
+// memcach setting
+define('MEMCACHE_HOST', 'localhost');
+define('MEMCACHE_PORT', '11211');
