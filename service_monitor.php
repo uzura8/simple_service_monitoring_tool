@@ -15,13 +15,15 @@ echo 'OK';
 class Service_Monitor
 {
   private $error_message = '';
+  private $db;
 
   public function check_services()
   {
     try
     {
-      $this->connect_mysql();
       $this->connect_memcache();
+      $this->connect_mysql();
+      $this->check_mysql_replications();
       return true;
     }
     catch(PDOException $e)
@@ -51,6 +53,9 @@ class Service_Monitor
 
   private function connect_memcache()
   {
+    if (!defined('MEMCACHE_HOST') || !MEMCACHE_HOST) return;
+    if (!defined('MEMCACHE_PORT') || !MEMCACHE_PORT) return;
+
     $memcache = new Memcache;
     if (!$memcache->connect(MEMCACHE_HOST, MEMCACHE_PORT))
     {
@@ -58,9 +63,40 @@ class Service_Monitor
     }
   }
 
-  private function connect_mysql()
+  private function connect_mysql($db_key = 'default')
   {
-    $db = new PDO(DB_PDO_DSN, DB_USERNAME, DB_PASSWORD);
-    $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    if ( empty($GLOBALS['_DB_DSN'][$db_key]['connection']['dsn'])
+      || empty($GLOBALS['_DB_DSN'][$db_key]['connection']['username']))
+    {
+      throw new Exception(sprintf('DB setting error(db:%s)', $db_key));
+    }
+    $config = $GLOBALS['_DB_DSN'][$db_key]['connection'];
+
+    $this->db = new PDO($config['dsn'], $config['username'], $config['password']);
+    $this->db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+  }
+
+  private function check_slave_status($db_key)
+  {
+    $this->connect_mysql($db_key);
+    if (!$result = $this->db->query('SHOW SLAVE STATUS'))
+    {
+      throw new Exception(sprintf('DB error(db:%s)', $db_key));
+      //throw new Exception(sprintf('DB error: %s', $this->db->errorInfo()[2]));
+    }
+    foreach($result->fetchAll() as $row)
+    {
+      var_dump($row);
+    }
+  }
+
+  private function check_mysql_replications()
+  {
+    if (empty($GLOBALS['_DB_DSN']['default']['readonly'])) return;
+    foreach ($GLOBALS['_DB_DSN']['default']['readonly'] as $db_key)
+    {
+      $this->check_slave_status($db_key);
+    }
   }
 }
+
