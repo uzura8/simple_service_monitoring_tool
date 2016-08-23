@@ -20,8 +20,8 @@ class Service_Monitor
   {
     try
     {
-      $this->check_mysql_connection();
-      $this->check_memcache_connection();
+      $this->connect_mysql();
+      $this->connect_memcache();
       return true;
     }
     catch(PDOException $e)
@@ -38,7 +38,7 @@ class Service_Monitor
 
   public function check_accessible_ip()
   {
-    if (!defined('ACCESSIBLE_IP' || !ACCESSIBLE_IP)) return true;
+    if (!defined('ACCESSIBLE_IP') || !ACCESSIBLE_IP) return true;
     if ($_SERVER['REMOTE_ADDR'] == ACCESSIBLE_IP) return true;
 
     return false;
