@@ -1,7 +1,8 @@
 <?php
 
 // if limit access, set accepted ip here (optional)
-//define('ACCESSIBLE_IP', '');
+//$GLOBALS['_ACCESSIBLE_IPS'] = array(
+//);
 
 //// memcach setting (optional)
 //define('MEMCACHE_HOST', 'localhost');

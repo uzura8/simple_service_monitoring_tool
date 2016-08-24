@@ -40,8 +40,9 @@ class Service_Monitor
 
   public function check_accessible_ip()
   {
-    if (!defined('ACCESSIBLE_IP') || !ACCESSIBLE_IP) return true;
-    if ($_SERVER['REMOTE_ADDR'] == ACCESSIBLE_IP) return true;
+    if (empty($GLOBALS['_ACCESSIBLE_IPS'])) return true; 
+    if (! is_array($GLOBALS['_ACCESSIBLE_IPS'])) $GLOBALS['_ACCESSIBLE_IPS'] = (array)$GLOBALS['_ACCESSIBLE_IPS'];
+    if (in_array($_SERVER['REMOTE_ADDR'], $GLOBALS['_ACCESSIBLE_IPS'])) return true;
 
     return false;
   }
